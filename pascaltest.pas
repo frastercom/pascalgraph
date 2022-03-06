@@ -1,16 +1,32 @@
 uses graphabc;
 const max=10;
-speed = 10;
+      speed = 10;
+      maxLife = 3; //максимальное количество жизней
 
-var x,y:integer;
+var x,y,x1,y1,x2,y2:integer;
     f:boolean;
     a:array[1..max,1..4] of integer;//new coment
     active:integer;
+    life:integer;//количество жизней
+    
+procedure popodanie(x: integer; y:integer);
+begin
+  if (x1>x) and (x<x2) then
+    if (y1>y) and (y<y2) then 
+      life:=life-1;
+end;
+    
+procedure isDead();
+begin
+  if life <= 0 then
+    f:=false;
+end;
     
 procedure picture(x:integer; y:integer);//отображение снаряда
 begin
   circle(x,y,10);
   FloodFill(x,y,clBlack);
+  popodanie(x,y);
 end;
 
 procedure arr();
@@ -61,9 +77,13 @@ begin
   end;
 end;
 
-procedure sharic;
+procedure sharic1;
 begin
   setbrushcolor(clBrown);
+  x1:=x;
+  x2:=x+50;
+  y1:=y;
+  y2:=y+20+100+50;
   circle(x,y,20);
   line(x,y+20,x,y+20+100);
   line(x,y+20+10,x-50,y+20+50);
@@ -72,19 +92,26 @@ begin
   line(x,y+20+100,x+50,y+20+100+50);
 end;
 
-procedure sharic1;
+procedure sharic;
 begin
   setbrushcolor(clBrown);
-  circle(x,y,20);
-  line(x,y+20,x,y+20+100);
-  line(x,y+20+10,x-50,y+20+50);
-  line(x,y+20+10,x+50,y+20+50);
-  line(x,y+20+100,x-50,y+20+100+50);
-  line(x,y+20+100,x+0,y+20+100+50);
+  Line(x,y,x+50,y); //x = 350 y = 50
+  Line(x,y,x-50,y+60);
+  Line(x+50,y,x-20,y+100);
+  Line(x-20,y+100,x-150,y+100);
+  Line(x-50,y+60,x-150,y+60);
+  Line(x-150,y+60,x-240,y+60);
+  Line(x-150,y+100,x-240,y+100);
+  Line(x-240,y+80,x-260,y+80);
+  Line(x-240,y+100,x-260,y+80);
+  Line(x-150,y+80,x-70,y+150);
+  Line(x-120,y+150,x-80,y+150);
+  Line(x-80,y+150,x-110,y+80);
 end;
  
 begin
   f:=true;
+  life:=maxLife;
   x:=windowwidth div 2;
   y:=windowheight div 2;
   lockdrawing; //убираем мерцание 
@@ -94,6 +121,8 @@ begin
     sharic1;
     arr();
     sleep(1);
+    isDead();
     redraw; //убираем мерцание
   until not f;
+  writeln('end');
 end.
