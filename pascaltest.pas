@@ -1,11 +1,11 @@
 uses graphabc;
 const max=10;
       speed = 10;
-      maxLife = 3; //максимальное количество жизней
+      maxLife = 1; //максимальное количество жизней
 
 var x,y,x1,y1,x2,y2:integer;
     f:boolean;
-    a:array[1..max,1..4] of integer;//new coment
+    a:array[1..max,1..5] of integer;//new coment
     active:integer;
     life:integer;//количество жизней
     
@@ -25,12 +25,25 @@ begin
     circle(x,y,10);
   end;
 end;
-    
-procedure popodanie(x: integer; y:integer);
+
+procedure lifePrint();
 begin
-  if (x1>x) and (x<x2) then
-    if (y1>y) and (y<y2) then 
-      life:=life-1;
+  for var i:=1 to maxLife do
+    if i<=life then
+      lifePicture(20+(i-1)*20, 50, true)
+    else
+      lifePicture(20+(i-1)*20, 50, false);
+end;
+    
+procedure popodanie(x: integer; y:integer; n:integer); //попал шарик или нет
+begin
+  if a[n,5] = 1 then
+    if (x1<x) and (x<x2) then
+      if (y1<y) and (y<y2) then 
+      begin
+        life:=life-1;
+        a[n,5]:=0;
+      end;
 end;
     
 procedure isDead();
@@ -39,11 +52,11 @@ begin
     f:=false;
 end;
     
-procedure picture(x:integer; y:integer);//отображение снаряда
+procedure picture(x:integer; y:integer; n:integer);//отображение снаряда
 begin
   circle(x,y,10);
   FloodFill(x,y,clBlack);
-  popodanie(x,y);
+  popodanie(x,y,n);
 end;
 
 procedure arr();
@@ -61,6 +74,7 @@ begin
           a[i,2]:=WindowWidth+10;
           a[i,3]:=random(WindowHeight);
           a[i,4]:=random(speed)+1;
+          a[i,5]:=1;
           active:=active+1;
           break;
         end;
@@ -69,7 +83,7 @@ begin
   begin
     if a[i,1]=1 then
     begin
-      picture(a[i,2],a[i,3]);
+      picture(a[i,2],a[i,3],i);
       a[i,2]:=a[i,2]-a[i,4];
       if (a[i,2]<1) then
       begin
@@ -97,16 +111,11 @@ end;
 procedure sharic1;
 begin
   setbrushcolor(clBrown);
-  x1:=x;
-  x2:=x+50;
-  y1:=y;
-  y2:=y+20+100+50;
+  x1:=x-20;
+  x2:=x+20;
+  y1:=y-20;
+  y2:=y+20;
   circle(x,y,20);
-  line(x,y+20,x,y+20+100);
-  line(x,y+20+10,x-50,y+20+50);
-  line(x,y+20+10,x+50,y+20+50);
-  line(x,y+20+100,x-50,y+20+100+50);
-  line(x,y+20+100,x+50,y+20+100+50);
 end;
 
 procedure sharic;
@@ -134,6 +143,7 @@ begin
   lockdrawing; //убираем мерцание 
   repeat
     clearwindow;
+    lifePrint();
     onkeydown:=klavisha;
     sharic1;
     arr();
@@ -141,5 +151,16 @@ begin
     isDead();
     redraw; //убираем мерцание
   until not f;
-  writeln('end');
+  clearwindow;
+  lifePrint();
+  sharic1;
+  arr();
+  sleep(1);
+  SetBrushColor(clWhite); // устанавливаем цвет фона для текста
+SetFontStyle(fsBoldItalicUnderline); // стиль шрифта
+SetFontSize(30); // размер шрифта
+SetFontColor(clRed); // цвет текста
+textout(30,30,'Игра окончена'); // устанавливаем координаты (x = 30, y = 30) для вывода текста
+  redraw;
+  
 end.
