@@ -9,6 +9,23 @@ var x,y,x1,y1,x2,y2:integer;
     active:integer;
     life:integer;//количество жизней
     
+procedure lifePicture(x: integer; y: integer; b: boolean);
+begin
+  if b then
+  begin
+    //если жизнь активна
+    setbrushcolor(clRed);
+    circle(x,y,10);
+    setbrushcolor(clWhite);
+  end
+  else
+  begin
+    //если не активна
+    setbrushcolor(clWhite);
+    circle(x,y,10);
+  end;
+end;
+    
 procedure popodanie(x: integer; y:integer);
 begin
   if (x1>x) and (x<x2) then
